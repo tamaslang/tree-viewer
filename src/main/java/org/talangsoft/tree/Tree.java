@@ -24,6 +24,13 @@ public class Tree<T> {
         this.childNodes.addAll(childNodes);
     }
 
+
+    public Tree(T data, T singleChild) {
+        this.data = data;
+        this.parent = Optional.empty();
+        this.childNodes.add(new Tree<T>(singleChild));
+    }
+
     public Tree(T data) {
         this.data = data;
         this.parent = Optional.empty();
@@ -93,6 +100,11 @@ public class Tree<T> {
     public List<T> getChildren() {
         return childNodes.stream().map(Tree::getData).collect(Collectors.toList());
     }
+
+    public Optional<T> getFirstChild() {
+        return childNodes.stream().map(Tree::getData).findFirst();
+    }
+
 
     public List<Tree<T>> getChildNodes() {
         return childNodes;

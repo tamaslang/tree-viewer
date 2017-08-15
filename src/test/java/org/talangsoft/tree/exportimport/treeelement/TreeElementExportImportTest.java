@@ -1,17 +1,16 @@
-package org.talangsoft.tree.exportimport.json;
+package org.talangsoft.tree.exportimport.treeelement;
 
 import org.junit.Test;
-import org.talangsoft.tree.ParentChildPair;
 import org.talangsoft.tree.Tree;
-import org.talangsoft.tree.TreeFromPairBuilder;
-import org.talangsoft.tree.exportimport.TreeElement;
+import org.talangsoft.tree.exportimport.parentchildpair.ParentChildPair;
+import org.talangsoft.tree.exportimport.parentchildpair.TreeFromPairBuilder;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TreeJsonExportImportTest {
+public class TreeElementExportImportTest {
     /*
      * |    A
      * |  /   \
@@ -38,9 +37,9 @@ public class TreeJsonExportImportTest {
 
     @Test
     public void exportCharacterTree() {
-        Tree<Character> charTree = TreeFromPairBuilder.build(parentChildPairs);
+        Tree<Character> charTree = TreeFromPairBuilder.buildFromRepeatedParentChildPairs(parentChildPairs);
         // map characters to their integer representation
-        List<TreeElement<Integer, Character>> exported = TreeJsonExporter.exportTree(charTree, Character::getNumericValue);
+        List<TreeElement<Integer, Character>> exported = TreeToTreeElementExporter.exportTree(charTree, Character::getNumericValue, TreeElement::buildFromElementAndParentOption);
 
             /*
              * |    A(10)
@@ -62,7 +61,7 @@ public class TreeJsonExportImportTest {
         );
 
 
-        Tree<Character> imported = TreeJsonImporter.importTree(exported, Character::getNumericValue);
+        Tree<Character> imported = TreeFromTreeElementBuilder.importTree(exported, Character::getNumericValue);
 
         verifyTreeNode(imported, 'A', new Character[]{'B', 'C'});
         verifyTreeNode(imported, 'B', new Character[]{});
@@ -71,7 +70,6 @@ public class TreeJsonExportImportTest {
         verifyTreeNode(imported, 'E', new Character[]{});
         verifyTreeNode(imported, 'F', new Character[]{});
         verifyTreeNode(imported, 'G', new Character[]{});
-
     }
 
     protected <T> void verifyTreeNode(Tree<T> tree, T nodeData, T... expectedElements) {

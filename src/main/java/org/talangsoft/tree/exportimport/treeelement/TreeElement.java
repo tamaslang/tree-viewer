@@ -1,4 +1,4 @@
-package org.talangsoft.tree.exportimport;
+package org.talangsoft.tree.exportimport.treeelement;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.EqualsAndHashCode;
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @ToString
 @EqualsAndHashCode(exclude = "element")
-public class TreeElement<ID, T> {
+public class TreeElement<ID, T> implements ToParentReferringTreeElement {
 
     @JsonUnwrapped
     private T element;
@@ -34,10 +34,12 @@ public class TreeElement<ID, T> {
         return new TreeElement(element, parentId);
     }
 
+    @Override
     public T getElement() {
         return element;
     }
 
+    @Override
     public Optional<ID> getParentId() {
         return parentId;
     }

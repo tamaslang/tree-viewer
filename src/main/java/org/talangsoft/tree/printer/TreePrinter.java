@@ -1,4 +1,6 @@
-package org.talangsoft.tree;
+package org.talangsoft.tree.printer;
+
+import org.talangsoft.tree.Tree;
 
 import java.util.stream.Collectors;
 
