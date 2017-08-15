@@ -1,4 +1,6 @@
-# java-interview-prep
+# # In PROGRESS... java-tree-viewer
+
+An application that shows examples of visualising trees on a web interface
 
 ### Prerequisites
 
