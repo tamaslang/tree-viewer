@@ -44,5 +44,11 @@ public class TreeElement<ID, T> implements ToParentReferringTreeElement {
         return parentId;
     }
 
-
+    @Override
+    public String toString() {
+        return "TreeElement{" +
+                "element=" + element +
+                ", parentId=" + parentId +
+                '}';
+    }
 }

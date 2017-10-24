@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TreeFromPairBuilder {
     protected static <T> Tree<T> addPair(Tree<T> tree, ParentChildPair<T> pair) {
@@ -64,31 +66,25 @@ public class TreeFromPairBuilder {
      * A-B; A-C; C-D; C-F; C-E; D-F; D-G
      */
     public static <T> Tree<T> buildFromParentChildPairs(List<ParentChildPair<T>> pairs) {
-        Set<Tree<T>> parentChildTrees = pairs.stream().map(pair -> new Tree<T>(pair.getParent(), pair.getChild())).collect(Collectors.toSet());
+        Set<Tree<T>> nodes = new HashSet<>();
 
-        Tree<T> root = parentChildTrees.stream().findFirst().get();
-        parentChildTrees.remove(root);
-        while (!parentChildTrees.isEmpty()) {
-            final Tree<T> treeRoot = root;
-            List<Tree<T>> elementsCanBeInserted = parentChildTrees.stream().filter(
-                    element -> treeRoot.getData().equals(element.getFirstChild().get()) || treeRoot.lookup(element.getData()).isPresent()
-            ).collect(Collectors.toList());
-            // remove from set
-            parentChildTrees.removeAll(elementsCanBeInserted);
-            // insert elements
-            for (Tree<T> elementToInsert : elementsCanBeInserted) {
-                if (elementToInsert.getFirstChild().get().equals(root.getData())) {
-                    elementToInsert.getChildNodes().clear();
-                    elementToInsert.insert(root);
-                    root = elementToInsert;
-                } else {
-                    Tree<T> newParent = root.lookup(elementToInsert.getData()).get();
-                    newParent.insert(elementToInsert.getFirstChild().get());
-                }
-            }
+        for (ParentChildPair<T> pair : pairs) {
+            Tree<T> parent = nodeForData(pair.getParent(), nodes);
+            Tree<T> child = nodeForData(pair.getChild(), nodes);
+
+            parent.insert(child);
         }
 
-        return root;
+        return nodes.stream().filter(tree -> !tree.getParent().isPresent()).findFirst().get();
+    }
+
+    private static <T> Tree<T> nodeForData(T data, Set<Tree<T>> nodes) {
+        // return existing node (Tree) whose data equals T, otherwise create and return new Tree after adding to Set of nodes
+        return nodes.stream().filter(node -> node.getData().equals(data)).findFirst().orElseGet(() -> {
+            Tree<T> newTree = new Tree<T>(data);
+            nodes.add(newTree);
+            return newTree;
+        });
     }
 
     private static <T> List<ParentChildPair<T>> getSortedParentChildPairs(List<ParentChildPair<T>> pairs) {
